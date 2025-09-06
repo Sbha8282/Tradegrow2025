@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Get Started - LogoCrypto{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="text-center mb-5">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-check text-success fs-2"></i>
+                    </div>
+                    <h2 class="fw-bold mb-3">Pro</h2>
+                    <p class="text-muted">
+                        Enjoy full features in $0 for 3 months, after that $160 per month.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <span class="display-4 fw-bold">$0</span>
+                        <span class="text-muted ms-2">For First month</span>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check text-success me-3"></i>
+                                <span>Enhanced Analytics</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check text-success me-3"></i>
+                                <span>Custom Domain</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check text-success me-3"></i>
+                                <span>E-commerce Integration</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check text-success me-3"></i>
+                                <span>Priority Support</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-4">
+                                <i class="fas fa-check text-success me-3"></i>
+                                <span>Advanced Security</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-chart-line me-2"></i>Get Started
+                            </a>
+                            <button class="btn btn-success btn-lg" onclick="skipInvitation()">
+                                <i class="fas fa-arrow-right me-2"></i>Skip to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="small text-muted">
+                        Welcome to LogoCrypto! <strong>{{ current_user.email }}</strong><br>
+                        <a href="{{ url_for('dashboard') }}" class="text-primary text-decoration-none">Skip and go to Dashboard</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function skipInvitation() {
+    if (confirm('Are you sure you want to skip the Pro subscription?')) {
+        window.location.href = "{{ url_for('dashboard') }}";
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - TradingGrow{% endblock %}
+
+{% block content %}
+<div id="user-dashboard"></div>
+
+<!-- Include React User Dashboard -->
+<script>
+window.userData = {
+    user: {{ user | tojson }},
+    sectorData: {{ sector_data | tojson }},
+    watchlists: {{ watchlists | tojson }}
+};
+</script>
+<script src="{{ url_for('static', filename='js/user-bundle.js') }}"></script>
+{% endblock %}

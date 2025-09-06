@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - TradingGrow{% endblock %}
+
+{% block content %}
+<div id="admin-dashboard"></div>
+
+<!-- Include React Admin Dashboard -->
+<script>
+window.adminData = {
+    stats: {{ stats | tojson }},
+    screenings: {{ screenings | tojson }},
+    subscription_requests: {{ subscription_requests | tojson }},
+    user: {
+        id: '{{ current_user.id }}',
+        email: '{{ current_user.email }}',
+        full_name: '{{ current_user.full_name }}',
+        is_admin: {{ current_user.is_admin | tojson }}
+    }
+};
+</script>
+<script src="{{ url_for('static', filename='js/admin-bundle.js') }}"></script>
+{% endblock %}

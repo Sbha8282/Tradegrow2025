@@ -1,0 +1,122 @@
+Industry Analysis Dashboard
+This project provides a comprehensive analysis of stock market industries using Mansfield Relative Strength (MRS) and market cap-weighted benchmarks. It includes data processing, analysis, and an interactive Streamlit dashboard.
+
+Features
+Market Cap Weighted Industry Benchmarks: Creates synthetic price series for each industry
+Mansfield Relative Strength (MRS): Calculates relative strength for individual stocks vs their industry
+Bullish Industry Identification: Identifies industries with positive trends and momentum
+Interactive Dashboard: Streamlit app with charts and analysis tools
+Data Storage: Uses DuckDB for efficient data storage and querying
+Virtual Environment: Isolated Python environment for clean dependency management
+Quick Start
+Option 1: Automated Setup (Recommended)
+python run_analysis.py
+This will:
+
+Create a virtual environment
+Install all required packages
+Run the complete analysis
+Generate CSV output files
+Option 2: Manual Setup
+Create virtual environment:
+python -m venv venv
+Activate virtual environment:
+# Windows
+venv\Scripts\activate.bat
+
+# Unix/Linux/Mac
+source venv/bin/activate
+Install packages:
+pip install -r requirements.txt
+Run analysis:
+python industry_analysis.py
+Usage
+1. Run the Analysis
+The analysis script will:
+
+Load the NASDAQ screener data (limited to top 100 stocks for stability)
+Download 1-year historical data for all stocks
+Calculate industry benchmarks
+Compute MRS for each stock
+Generate bullish industry analysis
+Save results to CSV files
+2. Launch the Dashboard
+After running the analysis, start the Streamlit dashboard:
+
+# Make sure virtual environment is activated
+streamlit run streamlit_app.py
+The dashboard will open in your browser with three main sections:
+
+Industry Overview
+Select any industry to view its benchmark price chart
+Compare MRS across stocks in the industry
+View normalized stock price comparisons
+Industry Analysis
+Detailed statistics for selected industries
+Current benchmark prices and trends
+Stock MRS rankings
+Bullish Analysis
+Top bullish industries based on MRS trends
+Stocks with positive momentum
+Weekly growth analysis
+Data Structure
+Input Data
+nasdaq_screener.csv: Contains stock symbols, industries, and market caps
+Output Files
+bullish_industries.csv: Summary of bullish industries
+bullish_stocks.csv: Individual stock analysis
+industry_data.duckdb: Database with all processed data
+Database Tables
+stock_data: Historical OHLCV data for all stocks
+industry_benchmarks: Market cap weighted industry price series
+stock_mrs: Mansfield Relative Strength calculations
+Analysis Methodology
+Industry Benchmark Calculation
+Group stocks by industry
+Calculate market cap weights for each stock
+Normalize each stock's price to 1.0 on the first day
+Create weighted average: Benchmark = Σ(Weight_i × Normalized_Price_i)
+Mansfield Relative Strength (MRS)
+MRS measures a stock's performance relative to its industry:
+
+MRS = (Industry_Normalized / Stock_Normalized) - 1
+Bullish Industry Criteria
+An industry is considered bullish if:
+
+Price > 50-day Simple Moving Average, OR
+Weekly MRS growth > 20%
+Configuration
+You can modify the analysis parameters in industry_analysis.py:
+
+min_mrs_threshold: Minimum MRS for bullish classification (default: 0.0)
+weekly_growth_threshold: Weekly growth threshold (default: 0.20)
+Date range for analysis (default: 1 year)
+Number of stocks to analyze (default: top 100)
+Troubleshooting
+Common Issues
+Segmentation fault: The script now limits to top 100 stocks and includes better error handling
+Memory issues: Data is processed in batches with garbage collection
+No data available: Ensure you've run the analysis script first
+Missing stock data: Some stocks may not have complete historical data
+Database errors: The script automatically removes and recreates the database
+Data Updates
+To update the analysis with fresh data:
+
+Delete the database file: rm industry_data.duckdb
+Re-run: python run_analysis.py
+Virtual Environment Issues
+If you encounter virtual environment problems:
+
+Delete the venv folder: rm -rf venv
+Re-run: python run_analysis.py
+Performance Notes
+Initial data download may take 5-15 minutes for 100 stocks
+The dashboard loads data efficiently using DuckDB
+Memory usage is optimized with batch processing and garbage collection
+Limited to top 100 stocks to prevent memory issues
+Files
+industry_analysis.py: Main analysis script
+streamlit_app.py: Interactive dashboard
+run_analysis.py: Automated setup and execution script
+requirements.txt: Python dependencies (no version constraints)
+README.md: This documentation

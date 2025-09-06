@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Watchlists - LogoCrypto{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar bg-dark text-white">
+        <div class="sidebar-header p-3">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h6>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <label class="form-label small text-muted">Select Market Types</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market</option>
+                <option>US Markets</option>
+                <option>International</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <label class="form-label small text-muted">Select Market</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market Charts</option>
+                <option>Sector Charts</option>
+                <option>Individual Stocks</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <label class="form-label small text-muted">Chart Watchlist</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market Charts</option>
+                <option>Technology</option>
+                <option>Healthcare</option>
+                <option>Financials</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <h6 class="small text-muted">Data Filters</h6>
+            <div class="mb-2">
+                <label class="form-label small">Market</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                    <option>US</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label class="form-label small">Min Mkt</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                    <option>50</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small">Min Vol (M)</label>
+                <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary" value="1">
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button class="btn btn-warning btn-sm">Reset</button>
+                <button class="btn btn-info btn-sm">Close</button>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer p-3 mt-auto">
+            <button class="btn btn-danger btn-sm w-100">
+                <i class="fas fa-bell me-2"></i>Subscription
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content flex-grow-1">
+        <div class="p-4">
+    <!-- Watchlist Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">CHARTS WATCHLIST</h2>
+            <p class="text-muted small mb-0">
+                Bullish sectors only (+%) (50 in 50 list, Volume: MRS vs S&P500)
+            </p>
+        </div>
+        <div>
+            <button class="btn btn-outline-secondary btn-sm me-2">
+                Symbol chart open in Financial.com
+            </button>
+            <button class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-cog me-1"></i>Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- Breakout Watchlist -->
+    <div class="card mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0 fw-bold">BREAKOUT WATCHLIST</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stock Sector</th>
+                            <th>Stock</th>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>My Buy Point</th>
+                            <th>Market Cap Category</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for watchlist in breakout_watchlists %}
+                            {% for stock in watchlist.stocks %}
+                            <tr>
+                                <td>{{ stock.sector }}</td>
+                                <td>{{ stock.company_name }}</td>
+                                <td>
+                                    <a href="#" class="text-primary fw-bold text-decoration-none">{{ stock.symbol }}</a>
+                                </td>
+                                <td>${{ "%.2f"|format(stock.price) }}</td>
+                                <td>${{ "%.2f"|format(stock.buy_point) }}</td>
+                                <td>{{ stock.market_cap_category }}</td>
+                                <td>{{ stock.country }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No stocks in breakout watchlist. <a href="#" class="text-primary">Add some stocks</a>.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Speculative Watchlist -->
+    <div class="card mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0 fw-bold">SPECULATIVE WATCHLIST</h5>
+            <small class="text-muted">Stocks below 20056A</small>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stock Sector</th>
+                            <th>Stock</th>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>My Buy Point</th>
+                            <th>Market Cap Category</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for watchlist in speculative_watchlists %}
+                            {% for stock in watchlist.stocks %}
+                            <tr>
+                                <td>{{ stock.sector }}</td>
+                                <td>{{ stock.company_name }}</td>
+                                <td>
+                                    <a href="#" class="text-primary fw-bold text-decoration-none">{{ stock.symbol }}</a>
+                                </td>
+                                <td>${{ "%.2f"|format(stock.price) }}</td>
+                                <td>${{ "%.2f"|format(stock.buy_point) }}</td>
+                                <td>{{ stock.market_cap_category }}</td>
+                                <td>{{ stock.country }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No stocks in speculative watchlist. <a href="#" class="text-primary">Add some stocks</a>.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Normal Watchlist -->
+    <div class="card mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0 fw-bold">NORMAL WATCHLIST</h5>
+            <small class="text-muted">Stocks below 20056A</small>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stock Sector</th>
+                            <th>Stock</th>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>My Buy Point</th>
+                            <th>Market Cap Category</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for watchlist in normal_watchlists %}
+                            {% for stock in watchlist.stocks %}
+                            <tr>
+                                <td>{{ stock.sector }}</td>
+                                <td>{{ stock.company_name }}</td>
+                                <td>
+                                    <a href="#" class="text-primary fw-bold text-decoration-none">{{ stock.symbol }}</a>
+                                </td>
+                                <td>${{ "%.2f"|format(stock.price) }}</td>
+                                <td>${{ "%.2f"|format(stock.buy_point) }}</td>
+                                <td>{{ stock.market_cap_category }}</td>
+                                <td>{{ stock.country }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No stocks in normal watchlist. <a href="#" class="text-primary">Add some stocks</a>.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

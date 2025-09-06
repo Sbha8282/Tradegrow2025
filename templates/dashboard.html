@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - LogoCrypto{% endblock %}
+
+{% block extra_head %}
+<style>
+    .sector-chart-card {
+        height: 400px;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    .sector-chart-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    .dashboard-stats {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        color: white;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stats-card {
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .premium-banner {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .watchlist-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+        border-bottom: 1px solid #e2e8f0;
+        border-radius: 12px 12px 0 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<script>
+    // Add dashboard body class for specific styling
+    document.body.classList.add('dashboard');
+</script>
+<div class="d-flex dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar bg-dark text-white">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Dashboard Settings</h6>
+        </div>
+        
+        <div class="sidebar-section">
+            <label class="form-label">Market Types</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market</option>
+                <option>US Markets</option>
+                <option>International</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section">
+            <label class="form-label">Chart Type</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market Charts</option>
+                <option>Sector Charts</option>
+                <option>Individual Stocks</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section">
+            <label class="form-label">Watchlist Category</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market Charts</option>
+                <option>Technology</option>
+                <option>Healthcare</option>
+                <option>Financials</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section">
+            <h6>Advanced Filters</h6>
+            <div>
+                <label class="form-label">Market</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                    <option>US</option>
+                    <option>Global</option>
+                    <option>Europe</option>
+                    <option>Asia</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Min Market Cap</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                    <option>50M</option>
+                    <option>100M</option>
+                    <option>500M</option>
+                    <option>1B</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Min Volume (M)</label>
+                <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary" value="1" placeholder="Enter volume">
+            </div>
+            
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-warning btn-sm"><i class="fas fa-undo me-1"></i>Reset Filters</button>
+                <button class="btn btn-outline-light btn-sm"><i class="fas fa-times me-1"></i>Close Panel</button>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <a href="{{ url_for('subscription') }}" class="btn btn-danger w-100 text-decoration-none">
+                <i class="fas fa-crown me-2"></i>Upgrade to Pro
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content flex-grow-1">
+        <div class="p-4">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">SECTOR CHARTS</h2>
+            <p class="text-muted small mb-0">
+                Bullish sectors only (+%) (51 in 50 list, Volume: MRS vs S&P500)
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('subscription') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-crown me-1"></i>Upgrade to Pro
+            </a>
+            <button class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-cog me-1"></i>Settings
+            </button>
+        </div>
+    </div>
+    
+    <!-- Premium Feature Banner -->
+    <div class="alert alert-info border-0 mb-4" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white;">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="mb-1 fw-bold"><i class="fas fa-star me-2"></i>Unlock Premium Features</h6>
+                <small class="opacity-75">Get access to advanced analytics, custom domains, and priority support</small>
+            </div>
+            <a href="{{ url_for('subscription') }}" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-right me-1"></i>View Plans
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard Statistics -->
+    <div class="dashboard-stats mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 class="fw-bold mb-1">{{ sector_data|length }}</h3>
+                    <small class="opacity-75">Active Sectors</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 class="fw-bold mb-1">{{ breakout_watchlists|length + speculative_watchlists|length + normal_watchlists|length }}</h3>
+                    <small class="opacity-75">Watchlist Items</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 class="fw-bold mb-1">78%</h3>
+                    <small class="opacity-75">Success Rate</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 class="fw-bold mb-1">$24.5K</h3>
+                    <small class="opacity-75">Portfolio Value</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sector Charts Grid -->
+    <div class="row g-4 mb-5">
+        {% for sector_name, sector_info in sector_data.items() %}
+            {% if loop.index <= 4 %}
+            <div class="col-md-6">
+                <div class="card sector-chart-card">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-white border-bottom">
+                        <div>
+                            <h6 class="mb-0 fw-bold">{{ sector_name }}</h6>
+                            {% if sector_info.change_percent >= 0 %}
+                                <span class="badge bg-success">Bullish</span>
+                            {% else %}
+                                <span class="badge bg-danger">Bearish</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">{{ sector_info.current_value }}</div>
+                            <small class="text-{{ 'success' if sector_info.change_percent >= 0 else 'danger' }}">
+                                {{ '+' if sector_info.change_percent >= 0 else '' }}{{ sector_info.change_percent }}%
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="chart-container">
+                            <canvas id="chart-{{ loop.index }}"></canvas>
+                        </div>
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <button class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>View Stocks
+                            </button>
+                            <div class="small text-muted">
+                                <span class="me-2">📈 Price</span>
+                                <span class="me-2">📊 %Gain</span>
+                                <span class="me-2">📈 RS</span>
+                                <span class="me-2">📊 Volume</span>
+                                <span>📈 MRS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Watchlist Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">CHARTS WATCHLIST</h2>
+            <p class="text-muted small mb-0">
+                Bullish sectors only (+%) (50 in 50 list, Volume: MRS vs S&P500)
+            </p>
+        </div>
+        <div>
+            <button class="btn btn-outline-secondary btn-sm me-2">
+                Symbol chart open in Financial.com
+            </button>
+            <button class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-cog me-1"></i>Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- Breakout Watchlist -->
+    <div class="card watchlist-card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-rocket me-2 text-success"></i>BREAKOUT WATCHLIST</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stock Sector</th>
+                            <th>Stock</th>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>My Buy Point</th>
+                            <th>Market Cap Category</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for watchlist in breakout_watchlists %}
+                            {% for stock in watchlist.stocks %}
+                            <tr>
+                                <td>{{ stock.sector }}</td>
+                                <td>{{ stock.company_name }}</td>
+                                <td>
+                                    <a href="#" class="text-primary fw-bold text-decoration-none">{{ stock.symbol }}</a>
+                                </td>
+                                <td>${{ "%.2f"|format(stock.price) }}</td>
+                                <td>${{ "%.2f"|format(stock.buy_point) }}</td>
+                                <td>{{ stock.market_cap_category }}</td>
+                                <td>{{ stock.country }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No stocks in breakout watchlist. <a href="#" class="text-primary">Add some stocks</a>.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Speculative Watchlist -->
+    <div class="card watchlist-card mb-4">
+        <div class="card-header">
+            <div>
+                <h5 class="mb-0 fw-bold"><i class="fas fa-chart-line me-2 text-warning"></i>SPECULATIVE WATCHLIST</h5>
+                <small class="text-muted">Stocks below 20056A</small>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stock Sector</th>
+                            <th>Stock</th>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>My Buy Point</th>
+                            <th>Market Cap Category</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for watchlist in speculative_watchlists %}
+                            {% for stock in watchlist.stocks %}
+                            <tr>
+                                <td>{{ stock.sector }}</td>
+                                <td>{{ stock.company_name }}</td>
+                                <td>
+                                    <a href="#" class="text-primary fw-bold text-decoration-none">{{ stock.symbol }}</a>
+                                </td>
+                                <td>${{ "%.2f"|format(stock.price) }}</td>
+                                <td>${{ "%.2f"|format(stock.buy_point) }}</td>
+                                <td>{{ stock.market_cap_category }}</td>
+                                <td>{{ stock.country }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No stocks in speculative watchlist. <a href="#" class="text-primary">Add some stocks</a>.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Normal Watchlist -->
+    <div class="card watchlist-card mb-4">
+        <div class="card-header">
+            <div>
+                <h5 class="mb-0 fw-bold"><i class="fas fa-list me-2 text-primary"></i>NORMAL WATCHLIST</h5>
+                <small class="text-muted">Stocks below 20056A</small>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Stock Sector</th>
+                            <th>Stock</th>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>My Buy Point</th>
+                            <th>Market Cap Category</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for watchlist in normal_watchlists %}
+                            {% for stock in watchlist.stocks %}
+                            <tr>
+                                <td>{{ stock.sector }}</td>
+                                <td>{{ stock.company_name }}</td>
+                                <td>
+                                    <a href="#" class="text-primary fw-bold text-decoration-none">{{ stock.symbol }}</a>
+                                </td>
+                                <td>${{ "%.2f"|format(stock.price) }}</td>
+                                <td>${{ "%.2f"|format(stock.buy_point) }}</td>
+                                <td>{{ stock.market_cap_category }}</td>
+                                <td>{{ stock.country }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No stocks in normal watchlist. <a href="#" class="text-primary">Add some stocks</a>.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+
+<!-- Spacer for footer -->
+<div style="height: 50px;"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+// Initialize charts with sector data
+const sectorData = {{ sector_data | tojson }};
+initializeSectorCharts(sectorData);
+</script>
+{% endblock %}

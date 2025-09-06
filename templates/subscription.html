@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription - LogoCrypto{% endblock %}
+
+{% block extra_head %}
+<style>
+.subscription-page {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+}
+
+.pricing-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.pricing-card .card-body {
+    padding: 2rem;
+}
+
+.pricing-card .display-4 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.pricing-card .btn-dark {
+    background-color: #1e293b;
+    border-color: #1e293b;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.pricing-card .btn-dark:hover {
+    background-color: #0f172a;
+    border-color: #0f172a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 41, 59, 0.4);
+}
+
+.pricing-card .btn-success {
+    background-color: #10b981;
+    border-color: #10b981;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.pricing-card .btn-success:hover {
+    background-color: #059669;
+    border-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.feature-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.pricing-header {
+    margin-bottom: 4rem;
+}
+
+.pricing-header h1 {
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.pricing-icon {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="subscription-page">
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar bg-dark text-white">
+        <div class="sidebar-header p-3">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h6>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <label class="form-label small text-muted">Select Market Types</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market</option>
+                <option>US Markets</option>
+                <option>International</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <label class="form-label small text-muted">Select Market</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market Charts</option>
+                <option>Sector Charts</option>
+                <option>Individual Stocks</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <label class="form-label small text-muted">Chart Watchlist</label>
+            <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option>Select Market Charts</option>
+                <option>Technology</option>
+                <option>Healthcare</option>
+                <option>Financials</option>
+            </select>
+        </div>
+        
+        <div class="sidebar-section p-3">
+            <h6 class="small text-muted">Data Filters</h6>
+            <div class="mb-2">
+                <label class="form-label small">Market</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                    <option>US</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label class="form-label small">Min Mkt</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary">
+                    <option>50</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small">Min Vol (M)</label>
+                <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary" value="1">
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button class="btn btn-warning btn-sm">Reset</button>
+                <button class="btn btn-info btn-sm">Close</button>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer p-3 mt-auto">
+            <a href="{{ url_for('subscription') }}" class="btn btn-danger btn-sm w-100 text-decoration-none">
+                <i class="fas fa-bell me-2"></i>Subscription
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content flex-grow-1">
+        <div class="container py-5">
+            <!-- Header Section -->
+            <div class="text-center mb-5">
+                <div class="d-flex justify-content-center align-items-center mb-3">
+                    <i class="fas fa-chart-line text-muted me-2"></i>
+                    <span class="text-muted small">Plans and pricing</span>
+                </div>
+                <h1 class="display-5 fw-bold mb-3">Transparent pricing for all.</h1>
+                <p class="text-muted fs-5">Choose the best plan for your business. Change plans as you grow.</p>
+            </div>
+            
+            <!-- Pricing Cards -->
+            <div class="row g-4 justify-content-center">
+                <!-- Free Plan -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card pricing-card h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <div class="pricing-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-check text-white fs-4"></i>
+                            </div>
+                            <h3 class="h4 fw-bold mb-2">Free</h3>
+                            <p class="text-muted small mb-4">Enjoy full features in $0 for 3 months, after that $160 per month.</p>
+                            
+                            <div class="mb-4">
+                                <span class="display-4 fw-bold">$0</span>
+                                <span class="text-muted ms-2">For First month</span>
+                            </div>
+                            
+                            <ul class="list-unstyled text-start mb-4 feature-list">
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Enhanced Analytics</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Custom Domain</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>E-commerce Integration</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Priority Support</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Advanced Security</span>
+                                </li>
+                            </ul>
+                            
+                            <div class="d-grid gap-2">
+                                <form action="{{ url_for('create_checkout_session') }}" method="POST">
+                                    <input type="hidden" name="plan" value="free">
+                                    <button type="submit" class="btn btn-dark btn-lg w-100">
+                                        <i class="fas fa-credit-card me-2"></i>Get Started
+                                    </button>
+                                </form>
+                                <button class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-times me-2"></i>Cancel subscription
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Medium Plan -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card pricing-card h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <div class="pricing-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-check text-white fs-4"></i>
+                            </div>
+                            <h3 class="h4 fw-bold mb-2">Medium</h3>
+                            <p class="text-muted small mb-4">Enjoy full features in $0 for 3 months, after that $160 per month.</p>
+                            
+                            <div class="mb-4">
+                                <span class="display-4 fw-bold">$10</span>
+                                <span class="text-muted ms-2">For 3 month</span>
+                            </div>
+                            
+                            <ul class="list-unstyled text-start mb-4 feature-list">
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Enhanced Analytics</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Custom Domain</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>E-commerce Integration</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Priority Support</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Advanced Security</span>
+                                </li>
+                            </ul>
+                            
+                            <div class="d-grid gap-2">
+                                <form action="{{ url_for('create_checkout_session') }}" method="POST">
+                                    <input type="hidden" name="plan" value="medium">
+                                    <button type="submit" class="btn btn-dark btn-lg w-100">
+                                        <i class="fas fa-credit-card me-2"></i>Get Started
+                                    </button>
+                                </form>
+                                <button class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-times me-2"></i>Cancel subscription
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card pricing-card h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <div class="pricing-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-check text-white fs-4"></i>
+                            </div>
+                            <h3 class="h4 fw-bold mb-2">Pro</h3>
+                            <p class="text-muted small mb-4">Enjoy full features in $0 for 3 months, after that $160 per month.</p>
+                            
+                            <div class="mb-4">
+                                <span class="display-4 fw-bold">$80</span>
+                                <span class="text-muted ms-2">For 6 month</span>
+                            </div>
+                            
+                            <ul class="list-unstyled text-start mb-4 feature-list">
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Enhanced Analytics</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Custom Domain</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>E-commerce Integration</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Priority Support</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check text-success me-3"></i>
+                                    <span>Advanced Security</span>
+                                </li>
+                            </ul>
+                            
+                            <div class="d-grid gap-2">
+                                <form action="{{ url_for('create_checkout_session') }}" method="POST">
+                                    <input type="hidden" name="plan" value="pro">
+                                    <button type="submit" class="btn btn-dark btn-lg w-100">
+                                        <i class="fas fa-credit-card me-2"></i>Get Started
+                                    </button>
+                                </form>
+                                <button class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-times me-2"></i>Cancel subscription
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Subscription Info -->
+            <div class="text-center mt-5">
+                <p class="text-muted">
+                    Your current subscription: <strong>Free Trial</strong><br>
+                    Next billing date: <strong>{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'N/A' }}</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

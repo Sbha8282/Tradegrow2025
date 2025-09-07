@@ -1,0 +1,282 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Node.js dependencies
+      run: npm ci
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flask flask-login flask-sqlalchemy flask-dance gunicorn psycopg2-binary requests werkzeug oauthlib email-validator pyjwt stripe
+
+    - name: Build React Frontend
+      run: |
+        npx webpack --mode production
+        
+    - name: Create static HTML files for GitHub Pages
+      run: |
+        mkdir -p dist
+        
+        # Create index.html for main app
+        cat > dist/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>TradingGrow - Financial Analytics Platform</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; }
+                .demo-notice { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; text-align: center; margin-bottom: 2rem; }
+            </style>
+        </head>
+        <body>
+            <div class="demo-notice">
+                <h4><i class="fas fa-info-circle me-2"></i>GitHub Pages Demo</h4>
+                <p class="mb-0">This is a static frontend demo. For full functionality including authentication and backend features, deploy the complete application to a platform like Heroku, Railway, or Render.</p>
+            </div>
+            <div id="root"></div>
+            <script>
+                window.isDemoMode = true;
+                window.adminData = {
+                    "stats": {"total_users": 0, "free_users": 0, "medium_users": 0, "pro_users": 0},
+                    "screenings": [],
+                    "subscription_requests": []
+                };
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="static/js/main-bundle.js"></script>
+        </body>
+        </html>
+        EOF
+        
+        # Create admin.html for admin dashboard demo
+        cat > dist/admin.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>TradingGrow Admin - Demo</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; }
+                .demo-notice { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; text-align: center; margin-bottom: 2rem; }
+            </style>
+        </head>
+        <body>
+            <div class="demo-notice">
+                <h4><i class="fas fa-shield-alt me-2"></i>Admin Dashboard Demo</h4>
+                <p class="mb-0">Static demo of the admin interface. Full admin functionality requires backend deployment.</p>
+            </div>
+            <div id="root"></div>
+            <script>
+                window.isDemoMode = true;
+                window.isAdminRoute = true;
+                window.adminData = {
+                    "stats": {
+                        "total_users": 156,
+                        "free_users": 89,
+                        "medium_users": 45,
+                        "pro_users": 22,
+                        "admin_users": 2,
+                        "total_screenings": 23,
+                        "pending_requests": 8
+                    },
+                    "screenings": [
+                        {
+                            "id": "demo-1",
+                            "name": "Tech Growth Stocks",
+                            "created_at": "2024-01-15T10:30:00Z",
+                            "created_by": "admin",
+                            "results": "{\"stocks\": [{\"symbol\": \"AAPL\", \"price\": 175.23, \"change_percent\": 2.45}, {\"symbol\": \"GOOGL\", \"price\": 142.56, \"change_percent\": 1.89}]}"
+                        }
+                    ],
+                    "subscription_requests": [
+                        {
+                            "id": "req-1",
+                            "user_email": "demo@example.com",
+                            "requested_tier": "pro",
+                            "current_tier": "free",
+                            "created_at": "2024-01-20T14:20:00Z"
+                        }
+                    ]
+                };
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="static/js/admin-bundle.js"></script>
+        </body>
+        </html>
+        EOF
+        
+        # Create user dashboard demo
+        cat > dist/dashboard.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>TradingGrow Dashboard - Demo</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; }
+                .demo-notice { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; text-align: center; margin-bottom: 2rem; }
+            </style>
+        </head>
+        <body>
+            <div class="demo-notice">
+                <h4><i class="fas fa-chart-line me-2"></i>User Dashboard Demo</h4>
+                <p class="mb-0">Frontend demo with sample data. Real-time data and user features require backend deployment.</p>
+            </div>
+            <div id="root"></div>
+            <script>
+                window.isDemoMode = true;
+                window.userData = {
+                    "user": {
+                        "id": "demo-user",
+                        "email": "demo@tradinggrow.com",
+                        "full_name": "Demo User",
+                        "subscription_tier": "pro",
+                        "created_at": "2024-01-01T00:00:00Z"
+                    },
+                    "watchlists": [
+                        {
+                            "id": "demo-watchlist",
+                            "name": "Tech Stocks",
+                            "stocks": ["AAPL", "GOOGL", "MSFT", "TSLA"]
+                        }
+                    ],
+                    "sectors": [
+                        {"name": "Technology", "performance": 5.2},
+                        {"name": "Healthcare", "performance": 2.1},
+                        {"name": "Finance", "performance": -1.3}
+                    ]
+                };
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="static/js/user-bundle.js"></script>
+        </body>
+        </html>
+        EOF
+
+    - name: Copy static assets
+      run: |
+        # Copy built JavaScript bundles
+        mkdir -p dist/static/js
+        cp static/js/*.js dist/static/js/ || echo "No JS bundles found - webpack build may have failed"
+        
+        # Copy any additional static assets
+        if [ -d "static/css" ]; then
+          mkdir -p dist/static/css
+          cp -r static/css/* dist/static/css/
+        fi
+        
+        if [ -d "static/images" ]; then
+          mkdir -p dist/static/images  
+          cp -r static/images/* dist/static/images/
+        fi
+        
+        # Create a simple README for the demo
+        cat > dist/README.md << 'EOF'
+        # TradingGrow - GitHub Pages Demo
+        
+        This is a static frontend demo of the TradingGrow financial analytics platform.
+        
+        ## Demo Pages
+        - [Main App](index.html) - Landing page and main application
+        - [Admin Dashboard](admin.html) - Admin interface demo
+        - [User Dashboard](dashboard.html) - User interface demo
+        
+        ## Limitations
+        This is a frontend-only demo with mock data. For full functionality including:
+        - User authentication (Google OAuth)
+        - Real-time financial data
+        - Database operations
+        - Subscription management
+        
+        Please deploy the complete application to a platform like:
+        - Heroku
+        - Railway  
+        - Render
+        - DigitalOcean App Platform
+        
+        ## Repository
+        [View full source code and deployment instructions](https://github.com/your-username/tradinggrow)
+        EOF
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload GitHub Pages artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: github-pages
+        path: './dist'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: github-pages
+        path: ./dist
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      with:
+        artifact_name: github-pages
+
+    - name: Display deployment info
+      run: |
+        echo "🚀 Deployment successful!"
+        echo "📱 Your TradingGrow demo is available at: ${{ steps.deployment.outputs.page_url }}"
+        echo "📊 Demo pages:"
+        echo "   • Main App: ${{ steps.deployment.outputs.page_url }}index.html"
+        echo "   • Admin Dashboard: ${{ steps.deployment.outputs.page_url }}admin.html" 
+        echo "   • User Dashboard: ${{ steps.deployment.outputs.page_url }}dashboard.html"
